@@ -1,6 +1,6 @@
 from pydantic import Field
 from app.data.database import read_query
-from app.utilities.responses import EmailExists
+from app.utilities.responses import EmailExists, Unauthorized
 
 
 def get_user_by_id(user_id: int = Field(gt=0)):
@@ -12,3 +12,7 @@ def check_existence(email):
     info = read_query('SELECT * FROM users WHERE email = %s',(email,))
     if info:
         raise EmailExists
+
+def stop_if_guest(user):
+    if user is None:
+        raise Unauthorized
