@@ -1,0 +1,7 @@
+revenue = fd.get_income_statement_annual(stock)
+net_income = fd.get_income_statement_annual(stock)
+total_assets = fd.get_balance_sheet_annual(stock)
+total_liabilities =  fd.get_balance_sheet_annual(stock)
+totalShareholderEquity =  fd.get_balance_sheet_annual(stock)
+eps = ?
+cash_flow = get_cash_flow_annual(stock)
