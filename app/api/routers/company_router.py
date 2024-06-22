@@ -14,4 +14,4 @@ company_router = APIRouter(prefix='/company')
 async def company_financial_performance(user:user_dependency, symbol:str):
     stop_if_guest(user)
     fp = await financial_performance(symbol)
-    return "14 years of information collected, parsed and sent towards the database"
+    return fp
