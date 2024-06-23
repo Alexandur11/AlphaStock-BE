@@ -1,9 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
 
+from app.api.routers.auth_router import register_router, logout_router, login_router
 from app.api.routers.company_router import company_router
-from app.api.routers.login_router import logout_router, login_router
-from app.api.routers.register_router import register_router
 from app.api.routers.core_stock_router import stocks_router
 
 app = FastAPI()

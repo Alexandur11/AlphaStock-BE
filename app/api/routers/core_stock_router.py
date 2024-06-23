@@ -1,9 +1,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from dotenv import dotenv_values
 
-from app.api.services.stock_fetches import stock_minutes, stock_days, stock_weeks, \
+from app.api.fetches.stock_fetches import stock_minutes, stock_days, stock_weeks, \
     stock_months, stock_latest
 from app.api.services.login_services import get_current_user
 from app.utilities.service_utilities import stop_if_guest

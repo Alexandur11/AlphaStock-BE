@@ -1,12 +1,11 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-
-from app.api.services.login_services import login, logout
+from app.api.services.auth_services import login, logout, register
 
 login_router = APIRouter(prefix='/login')
 logout_router = APIRouter(prefix='/logout')
+register_router = APIRouter(prefix='/register')
 
 all_users = {}
 
@@ -25,3 +24,7 @@ def user_logout(user_id: int):
     This method takes in the logged user's ID and logs them out.
     """
     return logout(user_id)
+
+@register_router.post('')
+async def register_user(email: str, password: str):
+    return await register(email, password)

@@ -4,7 +4,7 @@ from app.models.alpha_stock_tools import AlphaStockTools as AST
 
 
 class AlphaStock(AST):
-    def __init__(self, symbol:str, income_statement, balance_sheet, annual_eps):
+    def __init__(self, symbol: str, income_statement, balance_sheet, annual_eps):
         self.symbol = symbol
         self.income_statement = income_statement
         self.balance_sheet = balance_sheet
@@ -76,6 +76,7 @@ class AlphaStock(AST):
         except Exception as e:
             print(f"Error fetching or processing data: {e}")
             return None
+
     @property
     def net_profit_margin(self):
         try:

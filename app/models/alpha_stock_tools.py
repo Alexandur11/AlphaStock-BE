@@ -1,6 +1,4 @@
-import pandas as pd
-
-class AlphaStockTools():
+class AlphaStockTools:
     @staticmethod
     def calculate_revenue_growth(revenues):
         try:
@@ -39,5 +37,3 @@ class AlphaStockTools():
         except Exception as e:
             print(f"Error calculating net profit margin: {e}")
             return None
-
-

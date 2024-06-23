@@ -17,3 +17,4 @@ pillow~=10.3.0
 requests==2.32.3
 yfinance
 alpha_vantage
+pandas

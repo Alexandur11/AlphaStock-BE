@@ -1,16 +1,22 @@
-from typing import Annotated
-from starlette import status
 import bcrypt
-from datetime import datetime, timedelta
-from jose import jwt, JWTError
-from fastapi import HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer
-from dotenv import load_dotenv
 import os
 
+from dotenv import load_dotenv
+from datetime import datetime, timedelta
+from typing import Annotated
+from starlette import status
+from jose import jwt, JWTError
+
+from fastapi import HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
+
+
 from app.data.database import read_query
+from app.data.database import update_query
+
 from app.utilities.responses import NotFound
 from app.utilities.service_utilities import get_user_by_id
+from app.utilities.service_utilities import check_existence
 
 load_dotenv()
 
@@ -98,12 +104,10 @@ def logout(user_id: int):
     else:
         raise NotFound
 
-# def check_if_account_status_is_approved(username):
-#     info = read_query('SELECT status FROM users WHERE email = %s', (username,))
-#     if info[0][0] != 'approved':
-#         raise AccountNotApproved
 
-# async def password(email):
-#     info =  read_query('SELECT * FROM users WHERE email = %s', (email,))
-#     if info:
-#         update_query('UPDATE users SET password = %s WHERE email = %s', (new_password, email))
+async def register(email: str, password: str):
+    check_existence(email)
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    update_query('INSERT INTO users(email,password) VALUES(%s, %s)', (email, hashed_password))
+
+    return {"message": "User registered successfully!"}
