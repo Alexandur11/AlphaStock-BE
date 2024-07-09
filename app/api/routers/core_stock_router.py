@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from app.api.fetches.stock_fetches import stock_minutes, stock_days, stock_weeks, \
     stock_months, stock_latest
-from app.api.services.login_services import get_current_user
+from app.api.services.auth_services import get_current_user
 from app.utilities.service_utilities import stop_if_guest
 
 user_dependency = Annotated[dict, Depends(get_current_user)]
