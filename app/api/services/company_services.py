@@ -1,10 +1,11 @@
 from alpha_vantage.fundamentaldata import FundamentalData
 from dotenv import dotenv_values
+import pandas as pd
 
-
+from ML_Stock_Predictor.stock_predictor import stock_predictor
 from app.api.services.database_services_inputs import send_parameters_towards_the_database, company_overview_db_update
 from app.api.fetches.stock_fetches import fetch_annual_eps, fetch_cash_flows, fetch_overview, fetch_beta, \
-    fetch_market_data
+    fetch_market_data, stock_monthly_adjusted
 from app.data.database import read_query
 from app.models.alpha_stock import AlphaStock
 
@@ -67,3 +68,8 @@ def peter_lynch_value_calculator(egr,dy,pe_ratio):
 
 def company_info_from_db(stock):
     return read_query('SELECT * FROM company WHERE ticker = %s', (stock,))
+
+def ml_stock_prediction(stock):
+    data = stock_monthly_adjusted(stock)
+    info = pd.DataFrame(data['Monthly Adjusted Time Series'])
+    return stock_predictor(info)

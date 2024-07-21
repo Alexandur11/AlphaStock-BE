@@ -4,10 +4,10 @@ from urllib.request import urlopen
 
 from fastapi import APIRouter, Depends
 
-from app.api.fetches.stock_fetches import fetch_overview, fetch_data_with_safari
+from app.api.fetches.stock_fetches import fetch_overview, fetch_data_with_safari, stock_monthly_adjusted
 from app.api.services.auth_services import get_current_user
 from app.api.services.company_services import financial_performance, intrinsic_value_calculator, \
-    peter_lynch_value_calculator, company_info_from_db
+    peter_lynch_value_calculator, company_info_from_db, ml_stock_prediction
 
 from app.utilities.service_utilities import stop_if_guest
 
@@ -43,3 +43,7 @@ def peter_lynch(egr,dy,pe_ratio):
 def company_information(stock:str):
     ci = company_info_from_db(stock.lower())
     return ci
+
+@company_router.get('future_price')
+def stock_prediction(stock:str):
+    return ml_stock_prediction(stock)

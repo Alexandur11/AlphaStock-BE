@@ -57,6 +57,14 @@ def stock_months(stock: str):
 
     return data
 
+def stock_monthly_adjusted(stock:str):
+
+    url = f'https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol={stock}&apikey={Alpha_vintage_key}'
+    r = requests.get(url)
+    data = r.json()
+
+    return data
+
 
 def stock_latest(stock: str):
 
