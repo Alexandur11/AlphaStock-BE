@@ -18,3 +18,4 @@ requests==2.32.3
 yfinance
 alpha_vantage
 pandas
+Selenium

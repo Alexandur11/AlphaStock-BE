@@ -10,7 +10,6 @@ class AlphaStock:
         self.annual_eps = kwargs.get('annual_eps', None)
         self.cash_flows = kwargs.get('cash_flows', None)
         self.co = kwargs.get('co', None)  # company overview
-        self.beta = kwargs.get('beta', None)
         self.market_data_info = kwargs.get('market_data', None)
 
     @property
@@ -107,92 +106,131 @@ class AlphaStock:
 
     @property
     def fcf(self):
-        cf = pd.DataFrame(self.cash_flows.get('annualReports'))
-        ebitda = float(self.co['EBITDA'])
-        tax = self.tax_rate
-        capex = float(cf.iloc[0]['capitalExpenditures'])
+        try:
+            cf = pd.DataFrame(self.cash_flows.get('annualReports'))
+            ebitda = float(self.co['EBITDA'])
+            tax = self.tax_rate
+            capex = float(cf.iloc[0]['capitalExpenditures'])
 
-        fcf = ebitda * (1 - tax) - capex
+            fcf = ebitda * (1 - tax) - capex
 
-        return fcf
+            return fcf
+        except Exception as e:
+            print(f"Error calculating free cash flows: {e}")
+            return None
 
     @property
     def dcf(self):
-        projection_years = 5
-        dcf = (self.fcf + self.terminal_value / (1 + self.discount_rate) ** projection_years)
-        return dcf
+        try:
+            projection_years = 5
+            dcf = (self.fcf + self.terminal_value / (1 + self.discount_rate) ** projection_years)
+            return dcf
+        except Exception as e:
+            print(f"Error calculating discounted cash flows: {e}")
+            return None
 
     @property
     def growth_rate(self):
-        info = fetch_eps_from_database(self.symbol)
-        years = info[1]
-        eps = info[0]
-        eps_start = eps[0][0]
-        eps_end = eps[-1][0]
-        years = len(years) - 1  # Number of full years between the first and last EPS value
-        ca_gr = (eps_end / eps_start) ** (1 / years) - 1
-        return ca_gr
+        try:
+            info = fetch_eps_from_database(self.symbol)
+            years = info[1]
+            eps = info[0]
+            eps_start = eps[0][0]
+            eps_end = eps[-1][0]
+            years = len(years) - 1  # Number of full years between the first and last EPS value
+            ca_gr = (eps_end / eps_start) ** (1 / years) - 1
+            return ca_gr # compound annual growth rate
+        except Exception as e:
+            print(f"Error calculating growth rate: {e}")
+            return None
 
     @property
     def tax_rate(self):
-        df = pd.DataFrame(self.income_statement)
-        tax = float(df['incomeTaxExpense'].iloc[0]) / float(df['incomeBeforeTax'].iloc[0])
-        return tax
+        try:
+            df = pd.DataFrame(self.income_statement)
+            tax = float(df['incomeTaxExpense'].iloc[0]) / float(df['incomeBeforeTax'].iloc[0])
+            return tax
+        except Exception as e:
+            print(f"Error calculating tax rate: {e}")
+            return None
 
     @property
     def discount_rate(self):
-        ratios = self.calculate_ratios
-        risk_rate = 0.03  # Hardcoded value
-        market_return = self.calculate_market_data
-        beta = self.beta
-        cost_of_debt = self.calculate_cost_of_debt
-        debt_ratio = ratios[0]
-        equity_ratio = ratios[1]
-        total_market_value = equity_ratio + debt_ratio
-        cost_of_equity = risk_rate + beta * (market_return - risk_rate)
-        tax_rate = self.tax_rate
+        try:
+            ratios = self.calculate_ratios
+            risk_rate = 0.03  # Hardcoded value
+            market_return = self.calculate_market_data
+            beta = float(self.co['Beta'])
+            cost_of_debt = self.calculate_cost_of_debt
+            debt_ratio = ratios[0]
+            equity_ratio = ratios[1]
+            total_market_value = equity_ratio + debt_ratio
+            cost_of_equity = risk_rate + beta * (market_return - risk_rate)
+            tax_rate = self.tax_rate
 
-        wacc = (equity_ratio / total_market_value) * cost_of_equity + (
-                debt_ratio / total_market_value) * cost_of_debt * (1 - tax_rate)
-        return wacc
+            wacc = (equity_ratio / total_market_value) * cost_of_equity + (
+                    debt_ratio / total_market_value) * cost_of_debt * (1 - tax_rate)
+            return wacc
+        except Exception as e:
+            print(f"Error calculating discount rate: {e}")
+            return None
 
     @property
     def calculate_ratios(self):
-        b_df = pd.DataFrame(self.balance_sheet)
-        total_debt = float(b_df['totalLiabilities'].iloc[0])
-        total_equity = float(b_df['totalShareholderEquity'].iloc[0])
-        debt_ratio = total_debt / (total_debt + total_equity)
-        equity_ratio = total_equity / (total_debt + total_equity)
-        return debt_ratio, equity_ratio
+        try:
+            b_df = pd.DataFrame(self.balance_sheet)
+            total_debt = float(b_df['totalLiabilities'].iloc[0])
+            total_equity = float(b_df['totalShareholderEquity'].iloc[0])
+            debt_ratio = total_debt / (total_debt + total_equity)
+            equity_ratio = total_equity / (total_debt + total_equity)
+            return debt_ratio, equity_ratio
+        except Exception as e:
+            print(f"Error calculating debt and/or equity ratio: {e} ")
+            return None
 
     @property
     def calculate_cost_of_debt(self):
-        i_df = pd.DataFrame(self.income_statement)
-        b_df = pd.DataFrame(self.balance_sheet)
+        try:
+            i_df = pd.DataFrame(self.income_statement)
+            b_df = pd.DataFrame(self.balance_sheet)
 
-        interest_expense = float(i_df['interestExpense'].iloc[0])
-        total_debt = float(b_df['totalLiabilities'].iloc[0])
-        cost_of_debt = interest_expense / total_debt
-        return cost_of_debt
+            interest_expense = float(i_df['interestExpense'].iloc[0])
+            total_debt = float(b_df['totalLiabilities'].iloc[0])
+            cost_of_debt = interest_expense / total_debt
+            return cost_of_debt
+        except Exception as e:
+            print(f"Error calculating cost of debt: {e}")
+            return None
 
     @property
     def terminal_value(self):
-        terminal_growth_rate = 0.03
-        discount_rate = self.discount_rate
+        try:
+            terminal_growth_rate = 0.03
+            discount_rate = self.discount_rate
 
-        terminal_value = self.fcf * (1 + terminal_growth_rate) / (discount_rate - terminal_growth_rate)
-        return terminal_value
+            terminal_value = self.fcf * (1 + terminal_growth_rate) / (discount_rate - terminal_growth_rate)
+            return terminal_value
+        except Exception as e:
+            print(f"Error calculating terminal value: {e}")
+            return None
 
     @property
     def calculate_market_data(self):
-        # Calculate market return (average daily return)
-        self.market_data_info['daily_return'] = self.market_data_info['Adj Close'].pct_change()
-        average_market_return = self.market_data_info['daily_return'].mean() * 252
+        try:
+            self.market_data_info['daily_return'] = self.market_data_info['Adj Close'].pct_change()
+            average_market_return = self.market_data_info['daily_return'].mean() * 252
 
-        return average_market_return
+            return average_market_return
+        except Exception as e:
+            print(f"Error calculating market data: {e}")
+            return None
 
     @property
     def calculate_intrinsic_value(self):
-        dcf = self.dcf
-        so = float(self.co['SharesOutstanding'])
-        return dcf/so
+        try:
+            dcf = self.dcf
+            so = float(self.co['SharesOutstanding'])
+            return dcf / so
+        except Exception as e:
+            print(f"Error calculating intrinsic value : {e}")
+            return None

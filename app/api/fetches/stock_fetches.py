@@ -2,6 +2,11 @@ import pandas as pd
 import requests
 from dotenv import dotenv_values
 import yfinance as yf
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 env_vars = dotenv_values()
 Alpha_vintage_key = env_vars.get('ALPHA_VANTAGE_KEY')
@@ -84,3 +89,29 @@ def fetch_market_data(stock):
     # Yahoo
     market_data = yf.download(f'{stock}', start='2010-01-01', end='2023-01-01')
     return market_data
+
+
+
+def fetch_data_with_safari(stock):
+    url = f'https://finance.yahoo.com/quote/{stock}/analysis/'
+    # Initialize SafariDriver
+    driver = webdriver.Safari()
+
+    # Open the URL
+    driver.get(url)
+
+    try:
+        # Wait until the consent pop-up is present
+        consent_div = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'cookie-consent'))
+        )
+
+        # Click the accept button
+        accept_button = consent_div.find_element(By.ID, 'decline-cookies')
+        accept_button.click()
+    except Exception as e:
+        print(f"No cookie consent pop-up found: {e}")
+
+    # Extract data or interact with the page
+    # Example: Print page title
+    print(driver)
