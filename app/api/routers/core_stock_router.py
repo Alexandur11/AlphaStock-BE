@@ -1,27 +1,28 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 
 from app.api.fetches.stock_fetches import stock_minutes, stock_days, stock_weeks, \
     stock_months, stock_latest
 from app.api.services.auth_services import get_current_user
+from app.api.services.core_stock_services import monthly_visualisation
 from app.utilities.service_utilities import stop_if_guest
 
 user_dependency = Annotated[dict, Depends(get_current_user)]
 stocks_router = APIRouter(prefix='/stock')
 
 
-
-
 @stocks_router.get('/minutes')
-async def stock_per_minute(user: user_dependency, symbol: str, min: int):
+async def stock_per_minute(user: user_dependency, symbol: str, minutes: int):
     stop_if_guest(user)
-    return stock_minutes(symbol, min)
+    return stock_minutes(symbol, minutes)
+
 
 @stocks_router.get('/day')
 async def stock_per_day(user: user_dependency, symbol: str):
     stop_if_guest(user)
     return stock_days(symbol)
+
 
 @stocks_router.get('/week')
 async def stock_per_week(user: user_dependency, symbol: str):
@@ -29,13 +30,16 @@ async def stock_per_week(user: user_dependency, symbol: str):
 
     return stock_weeks(symbol)
 
-@stocks_router.get('/week')
-async def stock_per_month(user:user_dependency, symbol: str):
-    stop_if_guest(user)
-    return stock_months(symbol)
 
-@stocks_router.get('/week')
-async def stock_latest_price(user:user_dependency,symbol: str):
+@stocks_router.get('/month')
+async def stock_per_month(user: user_dependency, symbol: str):
+    stop_if_guest(user)
+    buf =  monthly_visualisation(symbol)
+    return Response(content=buf.getvalue(), media_type="image/png")
+
+
+@stocks_router.get('/latest')
+async def stock_latest_price(user: user_dependency, symbol: str):
     stop_if_guest(user)
     return stock_latest(symbol)
 

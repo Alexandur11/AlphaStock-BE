@@ -1,5 +1,4 @@
 from app.data.database import insert_query, read_query
-from datetime import datetime
 
 
 async def send_parameters_towards_the_database(revenue, net_income, eps, roe,
@@ -37,7 +36,7 @@ def eps_db_update(eps, stock):
 def revenue_db_update(revenue, stock):
     try:
         for x, y in zip(revenue['growth_rate'], revenue['fiscalDateEnding']):
-                insert_query('UPDATE company SET revenue = %s WHERE year = %s AND ticker = %s', (x, y, stock))
+            insert_query('UPDATE company SET revenue = %s WHERE year = %s AND ticker = %s', (x, y, stock))
     except Exception as e:
         print(f"Error with revenue_db_update: {e}")
 
@@ -77,9 +76,10 @@ def debt_level_db_update(debt, stock):
 def cash_flows_db_update(cash_flows, stock):
     try:
         for x, y in zip(cash_flows['operatingCashflow'], cash_flows['fiscalDateEnding']):
-           insert_query('UPDATE company SET cash_flow = %s WHERE year = %s AND ticker = %s', (x, y, stock))
+            insert_query('UPDATE company SET cash_flow = %s WHERE year = %s AND ticker = %s', (x, y, stock))
     except Exception as e:
         print(f"Error with debt_level_db_update: {e}")
+
 
 def company_overview_db_update(company_overview, stock):
     # Q1: October 1 - December 31
@@ -119,13 +119,14 @@ def company_overview_db_update(company_overview, stock):
                       company_overview['RevenueTTM'], company_overview['GrossProfitTTM'],
                       company_overview['DilutedEPSTTM'], company_overview['QuarterlyEarningsGrowthYOY'],
                       company_overview['QuarterlyRevenueGrowthYOY'], company_overview['AnalystTargetPrice'],
-                      company_overview['AnalystRatingStrongBuy'],company_overview['AnalystRatingBuy'],
+                      company_overview['AnalystRatingStrongBuy'], company_overview['AnalystRatingBuy'],
                       company_overview['AnalystRatingHold'], company_overview['AnalystRatingSell'],
                       company_overview['AnalystRatingStrongSell'], company_overview['TrailingPE'],
                       company_overview['ForwardPE'], company_overview['PriceToSalesRatioTTM'],
                       company_overview['PriceToBookRatio'], company_overview['EVToRevenue'],
                       company_overview['EVToEBITDA'], company_overview['Beta'], company_overview['52WeekHigh'],
-                      company_overview['52WeekLow'], company_overview['50DayMovingAverage'], company_overview['200DayMovingAverage'],
+                      company_overview['52WeekLow'], company_overview['50DayMovingAverage'],
+                      company_overview['200DayMovingAverage'],
                       company_overview['SharesOutstanding']))
 
     return "success"
