@@ -6,10 +6,14 @@ from app.api.routers.auth_router import register_router, logout_router, login_ro
 from app.api.routers.calculators_router import stock_calculator
 from app.api.routers.company_router import company_router
 from app.api.routers.core_stock_router import stocks_router
+from app.api.routers.news_router import news_router
+from app.api.routers.unknown_router import unknown_router
 
 app = FastAPI()
 
 
+app.include_router(news_router)
+app.include_router(unknown_router)
 app.include_router(register_router)
 app.include_router(login_router)
 app.include_router(logout_router)
