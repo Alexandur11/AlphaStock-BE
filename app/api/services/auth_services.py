@@ -92,7 +92,8 @@ def login(username: str, password: str):
     logged_in_users.update({f'{user_information[0][0]}': {'Email': username}})
     return {
         "access_token": user_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "role": user_information[0][3]
     }
 
 

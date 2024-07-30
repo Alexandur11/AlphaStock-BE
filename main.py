@@ -8,9 +8,19 @@ from app.api.routers.company_router import company_router
 from app.api.routers.core_stock_router import stocks_router
 from app.api.routers.news_router import news_router
 from app.api.routers.unknown_router import unknown_router
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+
+origins = ["http://localhost:5173"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(news_router)
 app.include_router(unknown_router)
