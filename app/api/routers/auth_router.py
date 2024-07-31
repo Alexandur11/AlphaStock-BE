@@ -20,13 +20,6 @@ def user_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     return login(form_data.username, form_data.password)
 
 
-@logout_router.post('', status_code=204)
-def user_logout(user:user_dependecy):
-    """
-    This method takes in the logged user's ID and logs them out.
-    """
-    return logout(user.user_id)
-
 @register_router.post('')
 async def register_user(email: str, password: str):
     return await register(email, password)
