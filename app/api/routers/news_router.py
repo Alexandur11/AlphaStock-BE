@@ -14,4 +14,4 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 @news_router.get('/')
 def stock_news(user:user_dependency,symbol:str):
     stop_if_guest(user)
-    return fetch_news_from_alpha_vantage(stock)
+    return fetch_news_from_alpha_vantage(symbol)
