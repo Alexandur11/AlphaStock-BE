@@ -24,7 +24,7 @@ async def company_overview(user: user_dependency, symbol: str):
 
 
 @company_router.get('/information')
-def company_information(user: user_dependency, stock: str):
+def company_information(user: user_dependency, symbol: str):
     stop_if_guest(user)
     ci = company_info_from_db(stock.lower())
     return ci
