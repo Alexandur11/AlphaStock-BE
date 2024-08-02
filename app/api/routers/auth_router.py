@@ -12,7 +12,7 @@ register_router = APIRouter(prefix='/register')
 all_users = {}
 
 
-@login_router.post('', status_code=201)
+@login_router.post('/token', status_code=201)
 def user_login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     """
     This method takes the user's email and password, logs them in, and returns a token.
