@@ -10,13 +10,13 @@ Alpha_vintage_key = env_vars.get('ALPHA_VANTAGE_KEY')
 fd = FundamentalData(Alpha_vintage_key)
 
 
-async def financial_performance(stock):
-    income_statement, _ = fd.get_income_statement_annual(stock)  # fetch  income statement
-    balance_sheet, _ = fd.get_balance_sheet_annual(stock)  # fetch balance sheet
-    annual_eps = fetch_annual_eps(stock, Alpha_vintage_key)  # fetch annual eps
-    cash_flows = fetch_cash_flows(stock, Alpha_vintage_key)  # fetch cash flow
+async def financial_performance(symbol):
+    income_statement, _ = fd.get_income_statement_annual(symbol)  # fetch  income statement
+    balance_sheet, _ = fd.get_balance_sheet_annual(symbol)  # fetch balance sheet
+    annual_eps = fetch_annual_eps(symbol, Alpha_vintage_key)  # fetch annual eps
+    cash_flows = fetch_cash_flows(symbol, Alpha_vintage_key)  # fetch cash flow
 
-    AS = AlphaStock(symbol=stock, income_statement=income_statement, balance_sheet=balance_sheet,
+    AS = AlphaStock(symbol=symbol, income_statement=income_statement, balance_sheet=balance_sheet,
                     annual_eps=annual_eps, cash_flows=cash_flows)
 
     revenue_for_14_years = AS.revenue
@@ -34,9 +34,9 @@ async def financial_performance(stock):
                                                net_profit_margin_for_14_years,
                                                debt_level_for_14_years,
                                                cash_flows_for_14_years,
-                                               stock)
+                                               symbol)
     return 'Parameters successfully fetched and registered'
 
 
-def company_info_from_db(stock):
-    return read_query('SELECT * FROM company WHERE ticker = %s', (stock,))
+def company_info_from_db(symbol):
+    return read_query('SELECT * FROM company WHERE symbol = %s', (symbol,))

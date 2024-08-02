@@ -10,19 +10,19 @@ Alpha_vintage_key = env_vars.get('ALPHA_VANTAGE_KEY')
 fd = FundamentalData(Alpha_vintage_key)
 
 
-async def intrinsic_value_calculator(stock):
-    market_data = fetch_market_data(stock)
-    cash_flows = fetch_cash_flows(stock, Alpha_vintage_key)
-    co = fetch_overview(stock.lower())
-    income_statement, _ = fd.get_income_statement_annual(stock)
-    balance_sheet, _ = fd.get_balance_sheet_annual(stock)
+async def intrinsic_value_calculator(symbol):
+    market_data = fetch_market_data(symbol)
+    cash_flows = fetch_cash_flows(symbol, Alpha_vintage_key)
+    co = fetch_overview(symbol.lower())
+    income_statement, _ = fd.get_income_statement_annual(symbol)
+    balance_sheet, _ = fd.get_balance_sheet_annual(symbol)
 
     try:
-        AS = AlphaStock(symbol=stock,
+        AS = AlphaStock(symbol=symbol,
                         cash_flows=cash_flows, co=co, market_data=market_data,
                         income_statement=income_statement, balance_sheet=balance_sheet)
 
-        company_overview_db_update(co, stock)
+        company_overview_db_update(co, symbol)
         iv = AS.calculate_intrinsic_value
         return iv
 

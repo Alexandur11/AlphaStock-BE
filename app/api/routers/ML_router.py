@@ -13,4 +13,4 @@ ML_router = APIRouter(prefix='/ML_services')
 @ML_router.get('/future_price')
 def stock_prediction(user: user_dependency, symbol: str):
     stop_if_guest(user)
-    return ml_stock_prediction(stock)
+    return ml_stock_prediction(symbol)
