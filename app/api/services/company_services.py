@@ -4,7 +4,7 @@ from app.api.services.database_services_inputs import send_parameters_towards_th
 from app.api.fetches.stock_fetches import fetch_annual_eps, fetch_cash_flows
 from app.data.database import read_query
 from app.models.alpha_stock import AlphaStock
-
+from app.utilities.service_utilities import display_charts
 env_vars = dotenv_values()
 Alpha_vintage_key = env_vars.get('ALPHA_VANTAGE_KEY')
 fd = FundamentalData(Alpha_vintage_key)
@@ -39,4 +39,6 @@ async def financial_performance(symbol):
 
 
 def company_info_from_db(symbol):
-    return read_query('SELECT * FROM company WHERE symbol = %s', (symbol,))
+    data =  read_query('SELECT * FROM company WHERE symbol = %s', (symbol,))
+    img = display_charts(data)
+    return img
