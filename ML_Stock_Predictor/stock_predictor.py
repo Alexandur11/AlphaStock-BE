@@ -34,6 +34,9 @@ def stock_predictor(data):
 
     avg_predicted_price = np.mean(y_pred)
 
-    return f'The avg predicted price {avg_predicted_price}, ' \
-           f'The rmse {rmse}, ' \
-           f'The r2 {r2}'
+
+    result = {'Avg PP': avg_predicted_price,
+              'rmse':rmse,
+              'r2':r2}
+
+    return result

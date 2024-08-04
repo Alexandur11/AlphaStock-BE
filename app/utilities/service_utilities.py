@@ -31,7 +31,7 @@ def display_charts(data):
     roe = [float(x[7]) for x in data]
 
     # Create a figure and a set of subplots
-    fig, axs = plt.subplots(3, 2, figsize=(14, 10))
+    fig, axs = plt.subplots(3, 2, figsize=(14, 10), facecolor='none')
 
     # Plot data on each subplot
     axs[0, 0].plot(years, revenue, 'b-o')
@@ -69,7 +69,7 @@ def display_charts(data):
 
     # Save the figure to a BytesIO object
     img = io.BytesIO()
-    plt.savefig(img, format='png')
+    plt.savefig(img, format='png', transparent=True)
     img.seek(0)
 
     return img
