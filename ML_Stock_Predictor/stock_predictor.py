@@ -40,3 +40,4 @@ def stock_predictor(data):
                f'The r2 {r2}'
     except Exception as e:
         return f'Error with the data {e}'
+

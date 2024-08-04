@@ -13,4 +13,3 @@ def alpha_vantage_news(symbol:str):
         return news
     except Exception as e:
         return f'Error with parsing data from AV, probably fetch limit related {e}'
-
