@@ -27,8 +27,12 @@ async def intrinsic_value_calculator(symbol):
         return iv
 
     except Exception as e:
-        print(f"Error with {e}")
+        return (f"Error with {e}")
 
 
 def peter_lynch_value_calculator(egr, dy, pe_ratio):
-    return (float(egr) + float(dy)) / float(pe_ratio)
+    try:
+        return (float(egr) + float(dy)) / float(pe_ratio)
+    except Exception as e:
+        return (f"There was a problem with the injected parameters {e}")
+

@@ -20,7 +20,7 @@ async def company_financial_performance(user: user_dependency, symbol: str):
 @company_router.get('/Company_overview')
 async def company_overview(user: user_dependency, symbol: str):
     stop_if_guest(user)
-    co = await fetch_overview(symbol.lower())
+    co = fetch_overview(symbol.lower())
     return co
 
 
