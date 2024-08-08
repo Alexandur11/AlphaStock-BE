@@ -1,13 +1,15 @@
 import os
 from typing import Annotated
+
+import bcrypt
 from starlette import status
 from jose import jwt, JWTError
 from dotenv import load_dotenv
-from app.utilities.responses import NotFound
+from app.utilities.responses import NotFound, EmailExists
 from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from app.data.database import read_query,update_query
+from app.data.database import read_query, update_query
 
 TOKEN_EXPIRATION = 30
 
@@ -43,8 +45,7 @@ async def logout_user(user):
 
 
 async def register_user(email: str, password: str):
-    return await register_service(email,password)
-
+    return await register_service(email, password)
 
 
 async def generate_token(data: dict):
@@ -89,12 +90,12 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     except JWTError:
         raise credentials_exception
 
+
 async def authenticate_user(email: str, password: str):
     user_info = read_query('SELECT * FROM users WHERE email = %s', (email,))
 
     if not user_info:
         raise NotFound
-
 
     if bcrypt.checkpw(password.encode('utf-8'), user_info[0][2].encode('utf-8')):
         return user_info
@@ -106,7 +107,6 @@ async def register_service(email, password):
     info = read_query('SELECT * FROM users WHERE email = %s', (email,))
     if info != []:
         raise EmailExists
-
 
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     update_query('INSERT INTO users(email,password) VALUES(%s, %s)', (email, hashed_password))
