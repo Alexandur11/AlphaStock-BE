@@ -23,7 +23,7 @@ async def intrinsic_value_calculator(symbol):
                         income_statement=income_statement, balance_sheet=balance_sheet)
 
         company_overview_db_update(co, symbol)
-        iv = AS.calculate_intrinsic_value
+        iv = AS.calculate_intrinsic_value_per_share
         return iv
 
     except Exception as e:

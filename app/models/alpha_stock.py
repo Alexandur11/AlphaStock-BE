@@ -1,6 +1,15 @@
 import pandas as pd
 from app.api.services.database_service_outputs import fetch_eps_from_database
 
+"""Assumption variables
+    1. Terminal growth Rate
+    2. Discount rate (WACC)
+    3. Projection Period
+    4. Growth Rates During Projection Period
+    5. Tax Rate
+    6. Capital Expenditures (CapEx)
+    """
+
 
 class AlphaStock:
     def __init__(self, **kwargs):
@@ -122,8 +131,10 @@ class AlphaStock:
     @property
     def dcf(self):
         try:
-            projection_years = 5
-            dcf = (self.fcf + self.terminal_value / (1 + self.discount_rate) ** projection_years)
+            projection_years = 5 # This is an assumption
+            dcf = (sum([(self.fcf / (1 + self.discount_rate) ** year) for year in range(1, projection_years + 1)])
+                   + (self.terminal_value / (1 + self.discount_rate) ** projection_years))
+
             return dcf
         except Exception as e:
             print(f"Error calculating discounted cash flows: {e}")
@@ -158,7 +169,7 @@ class AlphaStock:
     def discount_rate(self):
         try:
             ratios = self.calculate_ratios
-            risk_rate = 0.03  # Hardcoded value
+            risk_rate = 0.03  # This is an assumption
             market_return = self.calculate_market_data
             beta = float(self.co['Beta'])
             cost_of_debt = self.calculate_cost_of_debt
@@ -205,7 +216,7 @@ class AlphaStock:
     @property
     def terminal_value(self):
         try:
-            terminal_growth_rate = 0.03
+            terminal_growth_rate = 0.03  # This is an assumption.
             discount_rate = self.discount_rate
 
             terminal_value = self.fcf * (1 + terminal_growth_rate) / (discount_rate - terminal_growth_rate)
@@ -226,7 +237,10 @@ class AlphaStock:
             return None
 
     @property
-    def calculate_intrinsic_value(self):
+    def calculate_intrinsic_value_per_share(self):
+
+        """This method calculates the intrinsic value per share based on the total discounted cash flows from the dcf method."""
+
         try:
             dcf = self.dcf
             so = float(self.co['SharesOutstanding'])
@@ -234,3 +248,13 @@ class AlphaStock:
         except Exception as e:
             print(f"Error calculating intrinsic value : {e}")
             return None
+    @property
+    def calculate_relative_value_per_share(self):
+        # The EPS from company overview
+        # Fetch the list with competitors for the sector from OpenAI
+        # fetch each stock towards YahooF
+        # Collect the P/E ratio of each company from the fetched list from YahooF
+
+
+        # (sum(P/E Ratios) // len ) * eps
+        return None
