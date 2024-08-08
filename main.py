@@ -22,6 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(unknown_router)
 app.include_router(news_router, tags=['News'])
 app.include_router(auth_router, tags=['Authentication'])
 app.include_router(stocks_router, tags=['Stocks'])
